@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/apis/api_manager.dart';
 import 'package:news_app/apis/model/category.dart';
 import 'package:news_app/ui/screens/navigation/tabs/news/news_list.dart';
@@ -21,7 +22,7 @@ class NewsTab extends StatefulWidget {
 }
 
 class _NewsTabState extends State<NewsTab> {
-  late NewsViewModel viewModel;
+  late NewsViewModel viewModel=NewsViewModel();
 
   @override
   void initState() {
@@ -33,33 +34,48 @@ class _NewsTabState extends State<NewsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (_) => NewsViewModel(),
-        child: Builder(
-          builder: (context) {
-            // viewModel = Provider.of(context);
-            return Consumer<NewsViewModel>(builder: (context, viewModel, _) {
-              this.viewModel = viewModel;
-              if(viewModel.sourcesApi.status==ApiStatus.error){
-                return Text(viewModel.sourcesApi.errMessage??'');
+    return BlocProvider(create: (context)=>viewModel,
+    child: BlocBuilder<NewsViewModel,NewsState>(
+      builder: (context,state){
+    if(state.sourcesApi.status==ApiStatus.error){
+                return Text(state.sourcesApi.errMessage??'');
               }
-              else if(viewModel.sourcesApi.status==ApiStatus.loading){
+              else if(state.sourcesApi.status==ApiStatus.loading){
                 return const Center(child: CircularProgressIndicator());
               }
               else{
-                return buildTabsList(viewModel.sourcesApi.data??[]);
+                return buildTabsList(state.sourcesApi.data??[]);
               }
-             // if(viewModel.errMessage.isNotEmpty){
-             //   return Text(viewModel.errMessage);
-             // }else if(viewModel.isLoading){
-             //   return const Center(child: CircularProgressIndicator());
-             // }
-             // else{
-             //   return buildTabsList(viewModel.sources);
-             // }
-            });
-          },
-        ));
+      },
+    ),
+    );
+    // return ChangeNotifierProvider(
+    //     create: (_) => NewsViewModel(),
+    //     child: Builder(
+    //       builder: (context) {
+    //         // viewModel = Provider.of(context);
+    //         return Consumer<NewsViewModel>(builder: (context, viewModel, _) {
+    //           this.viewModel = viewModel;
+    //           if(viewModel.sourcesApi.status==ApiStatus.error){
+    //             return Text(viewModel.sourcesApi.errMessage??'');
+    //           }
+    //           else if(viewModel.sourcesApi.status==ApiStatus.loading){
+    //             return const Center(child: CircularProgressIndicator());
+    //           }
+    //           else{
+    //             return buildTabsList(viewModel.sourcesApi.data??[]);
+    //           }
+    //          // if(viewModel.errMessage.isNotEmpty){
+    //          //   return Text(viewModel.errMessage);
+    //          // }else if(viewModel.isLoading){
+    //          //   return const Center(child: CircularProgressIndicator());
+    //          // }
+    //          // else{
+    //          //   return buildTabsList(viewModel.sources);
+    //          // }
+    //         });
+    //       },
+    //     ));
     // return FutureBuilder(
     //     future: ,
     //     builder: (context, snapshot) {

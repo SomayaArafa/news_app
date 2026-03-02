@@ -6,7 +6,7 @@ enum ApiStatus{
 }
 
 class Resource<T> {
-  late T? data;
+  T? data=null;
   late bool isLoading = false;
   late String? errMessage;
 late ApiStatus status;
