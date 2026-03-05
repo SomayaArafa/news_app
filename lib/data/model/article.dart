@@ -1,7 +1,7 @@
-import 'source.dart';
+import 'remote_source.dart';
 
 class Article {
-  Source? source;
+  RemoteSource? source;
   String? author;
   String? title;
   String? description;
@@ -22,7 +22,7 @@ class Article {
   });
 
   Article.fromJson(dynamic json) {
-    source = json['source'] != null ? Source.fromJson(json['source']) : null;
+    source = json['source'] != null ? RemoteSource.fromJson(json['source']) : null;
     author = json['author'];
     title = json['title'];
     description = json['description'];

@@ -1,34 +1,33 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'package:news_app/data/repo/news_repo/news_repository_impl.dart';
+import 'package:news_app/domain/model/source.dart';
+import 'package:news_app/domain/use_cases/load_sources_usecase.dart';
 import 'package:news_app/ui/utils/resource.dart';
 
 import '../../../../../apis/api_manager.dart';
-import '../../../../../apis/model/source.dart';
-
+import '../../../../../data/model/remote_source.dart';
+@injectable
 class NewsViewModel extends Cubit<NewsState> {
-  // Resource <List<Source>> sourcesApi=Resource.initial();
-NewsViewModel():super(NewsState(Resource.initial()));
-//   List<Source> sources = [];
-// bool isLoading=false;
-// String errMessage='';
+  NewsViewModel(this.loadSourcesUseCase) : super(NewsState(Resource.initial()));
+  LoadSourcesUseCase loadSourcesUseCase;
+
   loadSources(String category) async {
-    try{
+    try {
       emit(NewsState(Resource.loading()));
-      // sourcesApi=Resource.loading();
-      // notifyListeners();
-      // isLoading=true;
-      var sources = await ApiManager.loadSources(category);
-      // sourcesApi=Resource.success(sources);
-emit( NewsState(Resource.success(sources)));
-    }catch(e){
-      // sourcesApi=Resource.error(e.toString());
+
+      var sources = await loadSourcesUseCase.call(category);
+      //momken asheel word call de 3ady
+      emit(NewsState(Resource.success(sources)));
+    } catch (e) {
       emit(NewsState(Resource.error(e.toString())));
     }
-    // notifyListeners();
   }
 }
-class NewsState{
-  Resource <List<Source>> sourcesApi=Resource.initial();
-NewsState(this.sourcesApi);
+
+class NewsState {
+  Resource<List<Source>> sourcesApi = Resource.initial();
+
+  NewsState(this.sourcesApi);
 }

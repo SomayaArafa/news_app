@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/apis/model/source.dart';
+import 'package:news_app/data/model/remote_source.dart';
+import 'package:news_app/domain/model/source.dart';
 import 'package:news_app/ui/screens/navigation/tabs/news/news_widget.dart';
 
 import '../../../../../apis/api_manager.dart';
-import '../../../../../apis/model/article.dart';
+import '../../../../../data/model/article.dart';
 import '../../../../widgets/error_widget.dart';
 
 class NewsList extends StatelessWidget {

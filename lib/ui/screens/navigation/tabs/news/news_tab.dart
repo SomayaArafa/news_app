@@ -1,15 +1,23 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/apis/api_manager.dart';
-import 'package:news_app/apis/model/category.dart';
+import 'package:news_app/data/mapper/sources_mapper.dart';
+import 'package:news_app/data/model/category.dart';
+import 'package:news_app/data/repo/news_repo/data_sources/local_data_sources/news_local_data_source.dart';
+import 'package:news_app/data/repo/news_repo/data_sources/remote_data_sources/news_remote_data_source.dart';
+import 'package:news_app/data/repo/news_repo/news_repository_impl.dart';
+import 'package:news_app/di/di.dart';
+import 'package:news_app/domain/model/source.dart';
+import 'package:news_app/domain/use_cases/load_sources_usecase.dart';
 import 'package:news_app/ui/screens/navigation/tabs/news/news_list.dart';
 import 'package:news_app/ui/utils/resource.dart';
 import 'package:news_app/ui/widgets/error_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../apis/model/source.dart';
+import '../../../../../data/model/remote_source.dart';
 import 'news_view_model.dart';
 
 class NewsTab extends StatefulWidget {
@@ -22,7 +30,7 @@ class NewsTab extends StatefulWidget {
 }
 
 class _NewsTabState extends State<NewsTab> {
-  late NewsViewModel viewModel=NewsViewModel();
+  late NewsViewModel viewModel = getIt();
 
   @override
   void initState() {
@@ -34,59 +42,20 @@ class _NewsTabState extends State<NewsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (context)=>viewModel,
-    child: BlocBuilder<NewsViewModel,NewsState>(
-      builder: (context,state){
-    if(state.sourcesApi.status==ApiStatus.error){
-                return Text(state.sourcesApi.errMessage??'');
-              }
-              else if(state.sourcesApi.status==ApiStatus.loading){
-                return const Center(child: CircularProgressIndicator());
-              }
-              else{
-                return buildTabsList(state.sourcesApi.data??[]);
-              }
-      },
-    ),
+    return BlocProvider(
+      create: (context) => viewModel,
+      child: BlocBuilder<NewsViewModel, NewsState>(
+        builder: (context, state) {
+          if (state.sourcesApi.status == ApiStatus.error) {
+            return Text(state.sourcesApi.errMessage ?? '');
+          } else if (state.sourcesApi.status == ApiStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return buildTabsList(state.sourcesApi.data ?? []);
+          }
+        },
+      ),
     );
-    // return ChangeNotifierProvider(
-    //     create: (_) => NewsViewModel(),
-    //     child: Builder(
-    //       builder: (context) {
-    //         // viewModel = Provider.of(context);
-    //         return Consumer<NewsViewModel>(builder: (context, viewModel, _) {
-    //           this.viewModel = viewModel;
-    //           if(viewModel.sourcesApi.status==ApiStatus.error){
-    //             return Text(viewModel.sourcesApi.errMessage??'');
-    //           }
-    //           else if(viewModel.sourcesApi.status==ApiStatus.loading){
-    //             return const Center(child: CircularProgressIndicator());
-    //           }
-    //           else{
-    //             return buildTabsList(viewModel.sourcesApi.data??[]);
-    //           }
-    //          // if(viewModel.errMessage.isNotEmpty){
-    //          //   return Text(viewModel.errMessage);
-    //          // }else if(viewModel.isLoading){
-    //          //   return const Center(child: CircularProgressIndicator());
-    //          // }
-    //          // else{
-    //          //   return buildTabsList(viewModel.sources);
-    //          // }
-    //         });
-    //       },
-    //     ));
-    // return FutureBuilder(
-    //     future: ,
-    //     builder: (context, snapshot) {
-    //       if (snapshot.hasError) {
-    //         return AppErrorWidget(message: snapshot.error.toString());
-    //       } else if (snapshot.hasData) {
-    //         return buildTabsList(snapshot.data!);
-    //       } else {
-    //         return const Center(child: CircularProgressIndicator());
-    //       }
-    //     });
   }
 
   buildTabsList(List<Source> sources) {

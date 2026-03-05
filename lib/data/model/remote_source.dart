@@ -1,4 +1,4 @@
-class Source {
+class RemoteSource {
   String? id;
   String? name;
   String? description;
@@ -7,7 +7,7 @@ class Source {
   String? language;
   String? country;
 
-  Source({
+  RemoteSource({
     this.id,
     this.name,
     this.description,
@@ -17,7 +17,7 @@ class Source {
     this.country,
   });
 
-  Source.fromJson(dynamic json) {
+  RemoteSource.fromJson(dynamic json) {
     id = json['id'];
     name = json['name'];
     description = json['description'];

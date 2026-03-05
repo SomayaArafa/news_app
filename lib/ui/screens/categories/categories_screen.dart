@@ -4,7 +4,7 @@ import 'package:news_app/ui/utils/extention/int_extensions.dart';
 import 'package:news_app/ui/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
-import '../../../apis/model/category.dart';
+import '../../../data/model/category.dart';
 import '../../providers/theme_provider.dart';
 import '../../utils/app_routes.dart';
 
